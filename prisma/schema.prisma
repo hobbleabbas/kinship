@@ -1,7 +1,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 datasource db {
-  provider     = "mongodb"
-  url          = env("DATABASE_URL")
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
 }
 
 // This is your Prisma schema file,
@@ -22,44 +22,86 @@ model Donation {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   createdAt DateTime @default(now())
 
-  // Donation details
-  donationStatus DonationStatus
-  // cause Cause
-  amountDonatedInCents Int
-  donatedAt DateTime
-  adheringLabels String[]
-
-  // Proof Details
-
-  // Payment Details
-
-  // Donor Details
+  donationDetails DonationDetails
+  proofDetails    ProofDetails[]
+  paymentDetails  PaymentDetails
+  donorDetails    DonorDetails
 }
 
-// model PaymentMethodCreditCard {
-//   id String   @id @default(auto()) @map("_id") @db.ObjectId
-//   processorFeeInCents Int
-//   ccEndsIn Int
-//   ccExpiryMonth Int
-//   ccExpiryYear Int
-//   stripePaymentIntentId String
-//   stripeCustomerId String
-//   stripeBalanceTxnId String
-// }
-//7xtlCzAxDtT9wofU
+type DonationDetails {
+  status               DonationStatus
+  cause                Cause
+  amountDonatedInCents Int
+  donatedAt            DateTime
+  adheringLabels       String[]
+}
 
-// model PaymentMethodAcssDebit {
-//   processorFeeInCents Int
-//   stripePaymentIntentId String
-//   stripeCustomerId String
-//   stripeBalanceTxnId String
-// }
+type ProofDetails {
+  // Amount distributed for this specific donation. 
+  // The parent proof has the total amount in this distribution
+  amountDistributedInCents Int
+  parentProofId            String
+}
 
+type PaymentDetails {
+  transactionStatus    TransactionStatus
+  amountChargedInCents Int
+  currency             Currency
+  paymentMethod        PaymentMethod
+}
 
-// model Cause {
-//   id      Int     @id @default(autoincrement())
-//   name    String
-// }
+type PaymentMethod {
+  creditCard PaymentMethodCreditCard?
+  acssDebit  PaymentMethodAcssDebit?
+  cash       Boolean? // Indicates if the payment method is cash
+}
+
+type PaymentMethodCreditCard {
+  processorFeeInCents   Int
+  ccEndsIn              Int
+  ccExpiryMonth         Int
+  ccExpiryYear          Int
+  stripePaymentIntentId String
+  stripeCustomerId      String
+  stripeBalanceTxnId    String
+}
+
+type PaymentMethodAcssDebit {
+  processorFeeInCents   Int
+  stripePaymentIntentId String
+  stripeCustomerId      String
+  stripeBalanceTxnId    String
+}
+
+type DonorDetails {
+  firstName         String
+  lastName          String
+  email             String
+  address           Address
+  stripeCustomerIds String[]
+}
+
+model Proof {
+  id                       String   @id @default(auto()) @map("_id") @db.ObjectId
+  amountDistributedInCents Int
+  messageToDonor           String
+  regionDistributed        String
+  adheringLabels           String[]
+  donations                String[]
+}
+
+type Cause {
+  name   String
+  region String
+}
+
+type Address {
+  street  String
+  city    String
+  zip     String
+  state   String
+  country String
+}
 
 enum DonationStatus {
   PROCESSING
@@ -78,33 +120,3 @@ enum Currency {
   CAD
   USD
 }
-
-// proof details
-  // amount_distributed
-  // proof (array)
-    // amount_distributed_cents
-    // images (zip file url)
-    // message_to_donor
-    // region_distributed
-    // adhering_labels (array)
-// payment details
-  // transaction_status (processing, payment_failed, succeeded)
-  // amount_charged_in_cents
-  // currency - (cad, usd)
-  // payment method
-    
-// donor details
-  // donor_first_name
-  // donor_last_name
-  // donor_email
-  // donor_address
-    // street_address
-    // city
-    // province
-    // postal_code
-    // country
-  // donor_phone_number
-  
-
-
-// payment method - stripe_acss_debit, stripe_cc, paypal, cash, cheque
