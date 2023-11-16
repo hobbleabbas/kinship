@@ -1,0 +1,110 @@
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+datasource db {
+  provider     = "mongodb"
+  url          = env("DATABASE_URL")
+}
+
+// This is your Prisma schema file,
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Post {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([name])
+}
+
+model Donation {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+
+  // Donation details
+  donationStatus DonationStatus
+  // cause Cause
+  amountDonatedInCents Int
+  donatedAt DateTime
+  adheringLabels String[]
+
+  // Proof Details
+
+  // Payment Details
+
+  // Donor Details
+}
+
+// model PaymentMethodCreditCard {
+//   id String   @id @default(auto()) @map("_id") @db.ObjectId
+//   processorFeeInCents Int
+//   ccEndsIn Int
+//   ccExpiryMonth Int
+//   ccExpiryYear Int
+//   stripePaymentIntentId String
+//   stripeCustomerId String
+//   stripeBalanceTxnId String
+// }
+//7xtlCzAxDtT9wofU
+
+// model PaymentMethodAcssDebit {
+//   processorFeeInCents Int
+//   stripePaymentIntentId String
+//   stripeCustomerId String
+//   stripeBalanceTxnId String
+// }
+
+
+// model Cause {
+//   id      Int     @id @default(autoincrement())
+//   name    String
+// }
+
+enum DonationStatus {
+  PROCESSING
+  DELIVERED_TO_PARTNERS
+  PARTIALLY_DISTRIBUTED
+  FULLY_DISTRIBUTED
+}
+
+enum TransactionStatus {
+  PROCESSING
+  PAYMENT_FAILED
+  SUCCEEDED
+}
+
+enum Currency {
+  CAD
+  USD
+}
+
+// proof details
+  // amount_distributed
+  // proof (array)
+    // amount_distributed_cents
+    // images (zip file url)
+    // message_to_donor
+    // region_distributed
+    // adhering_labels (array)
+// payment details
+  // transaction_status (processing, payment_failed, succeeded)
+  // amount_charged_in_cents
+  // currency - (cad, usd)
+  // payment method
+    
+// donor details
+  // donor_first_name
+  // donor_last_name
+  // donor_email
+  // donor_address
+    // street_address
+    // city
+    // province
+    // postal_code
+    // country
+  // donor_phone_number
+  
+
+
+// payment method - stripe_acss_debit, stripe_cc, paypal, cash, cheque
