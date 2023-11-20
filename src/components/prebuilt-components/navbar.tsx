@@ -1,6 +1,7 @@
 import { useUser } from "@clerk/nextjs"
 import Link from "next/link"
 import { useRouter } from "next/router"
+import { Button } from "../ui-primitives/button"
 
 export default function Navbar() {
 
@@ -25,7 +26,7 @@ export default function Navbar() {
                     <Link href={path.path} key={path.name} className={path.path == currentPath ? "p-4 underline underline-offset-2" : "p-4"}>{path.name}</Link>
                 ))}
             </div>
-            <Link className={("/dashboard" == currentPath) ? "underline underline-offset-2" : ""} href={user.isSignedIn ? "/dashboard" : "/auth"}>My Receipts</Link>
+            <Link className={("/dashboard" == currentPath) ? "underline underline-offset-2" : ""} href={user.isSignedIn ? "/dashboard" : "/auth"}><Button variant={"default"}>My Receipts</Button></Link>
         </nav>
     )
 }

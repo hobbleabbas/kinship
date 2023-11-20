@@ -4,7 +4,7 @@ import { api } from "~/utils/api";
 
 import "~/styles/globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
-import Navbar from "~/components/navbar";
+import Navbar from "~/components/prebuilt-components/navbar";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (

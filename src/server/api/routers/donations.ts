@@ -7,32 +7,32 @@ export const donationsRouter = createTRPCRouter({
     // (Manual) createDonationByManualEntry
     // Fetch all donations for user
     // Fetch specific donation
-    
-    hello: publicProcedure
-        .input(z.object({ text: z.string() }))
+    initializeStripeCharge: publicProcedure
+        .input(z.object({
+            donorDetails: z.object({
+                firstName: z.string().min(1),
+                lastName: z.string().min(1),
+                email: z.string().email(),
+                address: z.object({
+                    street: z.string(),
+                    city: z.string(),
+                    zip: z.string(),
+                    state: z.string(),
+                    country: z.string()
+                })
+            }),
+            donationDetails: z.object({
+                adheringLabels: z.array(z.string()),
+                amountDonatingInCents: z.number().int(),
+                cause: z.object({
+                    name: z.string(),
+                    region: z.string()
+                }).optional()
+            })
+        }))
         .query(({ input }) => {
             return {
-            greeting: `Hello ${input.text}`,
+              greeting: `Hello ${input.donorDetails.firstName}`,
             };
         }),
-
-    create: publicProcedure
-        .input(z.object({ name: z.string().min(1) }))
-        .mutation(async ({ ctx, input }) => {
-            // simulate a slow db call
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-
-            return ctx.db.post.create({
-            data: {
-                name: input.name,
-            },
-            });
-        }),
-
-    getLatest: publicProcedure
-        .query(({ ctx }) => {
-            return ctx.db.post.findFirst({
-                orderBy: { createdAt: "desc" },
-            });
-        }),
-});
+})

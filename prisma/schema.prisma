@@ -30,7 +30,7 @@ model Donation {
 
 type DonationDetails {
   status               DonationStatus
-  cause                Cause
+  cause                Cause?
   amountDonatedInCents Int
   donatedAt            DateTime
   adheringLabels       String[]
@@ -58,19 +58,26 @@ type PaymentMethod {
 
 type PaymentMethodCreditCard {
   processorFeeInCents   Int
-  ccEndsIn              Int
+  ccEndsIn              String?
   ccExpiryMonth         Int
   ccExpiryYear          Int
+  stripeChargeId        String
   stripePaymentIntentId String
   stripeCustomerId      String
-  stripeBalanceTxnId    String
+  stripeBalanceTxnId    String?
 }
 
 type PaymentMethodAcssDebit {
   processorFeeInCents   Int
+  bankName              String?
+  fingerPrint           String?
+  institutionNumber     String?
+  accountEndsIn         String?
+  transitNumber         String?
   stripePaymentIntentId String
   stripeCustomerId      String
   stripeBalanceTxnId    String
+  stripeChargeId        String
 }
 
 type DonorDetails {
@@ -111,8 +118,8 @@ enum DonationStatus {
 }
 
 enum TransactionStatus {
-  PROCESSING
-  PAYMENT_FAILED
+  PENDING
+  FAILED
   SUCCEEDED
 }
 
