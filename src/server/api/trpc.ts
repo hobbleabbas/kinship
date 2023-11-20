@@ -34,11 +34,13 @@ type CreateContextOptions = Record<string, never>;
 export const createTRPCContext = (opts: CreateNextContextOptions) => {
   const { req } = opts
   const currentUserId = getAuth(req).userId
+  const isAdmin = getAuth(req).orgRole == "admin"
 
   return {
     db,
     stripeClient,
-    currentUserId
+    currentUserId,
+    isAdmin
   }
 };
 
@@ -100,4 +102,17 @@ const enforceUserIsAuthed = t.middleware(async ({ ctx, next }) => {
     }
   })
 })
+
 export const privateProcedure = t.procedure.use(enforceUserIsAuthed)
+
+const enforceUserIsAdmin = t.middleware(async ({ ctx, next }) => {
+  if (!ctx.isAdmin) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+    })
+  }
+
+  return next()
+})
+
+export const adminProcedure = t.procedure.use(enforceUserIsAdmin)

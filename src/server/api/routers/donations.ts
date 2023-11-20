@@ -1,12 +1,44 @@
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { adminProcedure, createTRPCRouter, privateProcedure, publicProcedure } from "~/server/api/trpc";
+import { ValidDonationId } from "~/server/methods/utils";
 
 export const donationsRouter = createTRPCRouter({
-    // (Webhook only) createDonationByWebhook
-    // (Manual) createDonationByManualEntry
-    // Fetch all donations for user
-    // Fetch specific donation
+    manuallyCreateDonation: adminProcedure
+        .mutation(({ ctx }) => {
+            return {
+                message: "successfully accessed admin endpoint"
+            }
+        }),
+    webhookCreationDonation: adminProcedure
+        .mutation(({ ctx }) => {
+            return {
+                message: "successfully accessed admin endpoint"
+            }
+        }),
+    /**
+     * Fetch all donations for currentUser
+     */
+    queryForUser: privateProcedure
+        .query(({ ctx }) => {
+            return {
+                greeting: `Your donations, ${ctx.currentUserId}`,
+            };
+        }),
+    /**
+     * Fetch a specific donation. Accepts Kinship ID or a Stripe ID
+     */
+    getDonation: publicProcedure
+        .input(z.object({ donationId: ValidDonationId }))
+        .query(({ ctx, input }) => {
+            return ctx.db.post.findFirst({
+                orderBy: { createdAt: "desc" },
+            });
+        }),
+
+    /**
+     * For frontend use
+     */
     initializeStripeCharge: publicProcedure
         .input(z.object({
             donorDetails: z.object({
@@ -35,4 +67,6 @@ export const donationsRouter = createTRPCRouter({
               greeting: `Hello ${input.donorDetails.firstName}`,
             };
         }),
+    
+    
 })

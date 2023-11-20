@@ -205,3 +205,9 @@ export const formatDonationFromStripe = async (
 
     return formattedDonation
 }
+
+export const updateMetadata = async (
+    event_type: "donation_made" | "proof_delivered" | "balance_transaction_received"
+) => {
+    throw new Error("Not implemented")
+}
